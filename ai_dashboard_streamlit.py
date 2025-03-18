@@ -71,4 +71,4 @@ st.pyplot(fig)
 
 # ===================== Auto-Refresh Every Few Seconds =====================
 st.session_state.last_update = time.time()
-st.experimental_rerun()
+st.rerun()

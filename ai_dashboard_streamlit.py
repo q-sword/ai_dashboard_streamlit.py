@@ -8,17 +8,15 @@ from scipy.stats import norm
 from scipy.integrate import solve_ivp
 from sklearn.metrics import mean_squared_error
 
-# Page Configuration
-if "config_set" not in st.session_state:
-    st.set_page_config(layout="wide", page_title="AI-Powered Gravitational Wave & Quantum Analysis")
-    st.session_state["config_set"] = True
+# ===================== Page Configuration =====================
+st.set_page_config(layout="wide", page_title="AI-Powered Gravitational Wave & Quantum Analysis")
 
-# Sidebar Controls
+# ===================== Sidebar Controls =====================
 st.sidebar.header("Settings & Controls")
 sensitivity_threshold = st.sidebar.slider("Set Sensitivity for Event Classification", 0.1, 5.0, 1.0)
 auto_refresh = st.sidebar.checkbox("Enable Auto-Refresh", value=True)
 
-# Fetch Real-Time LIGO/VIRGO Data
+# ===================== Fetch Real-Time LIGO/VIRGO Data =====================
 @st.cache_data(ttl=300)
 def fetch_ligo_data():
     url = "https://www.gw-openscience.org/eventapi/json/"
@@ -51,7 +49,7 @@ def fetch_historical_ligo_data():
 
 ligo_df = fetch_ligo_data()
 
-# AI vs. LIGO Waveform Comparison
+# ===================== AI vs. LIGO Waveform Comparison =====================
 with st.container():
     st.subheader("AI vs. LIGO Waveform Comparison")
     fig, ax = plt.subplots(figsize=(10, 4))
@@ -65,7 +63,7 @@ with st.container():
     ax.grid(True, linestyle='--', alpha=0.7)
     st.pyplot(fig)
 
-# Quantum AI Wavefunction Evolution
+# ===================== Quantum AI Wavefunction Evolution =====================
 with st.container():
     st.subheader("Quantum AI-Driven Wavefunction Evolution")
     fig, ax = plt.subplots(figsize=(10, 4))
@@ -76,7 +74,7 @@ with st.container():
     ax.grid(True, linestyle='--', alpha=0.7)
     st.pyplot(fig)
 
-# String Theory & Quantum Flux Graph
+# ===================== String Theory & Quantum Flux Graph =====================
 with st.container():
     st.subheader("String Theory & Quantum Flux Graph")
     x_values = np.linspace(0, 10, 1000)
@@ -91,7 +89,7 @@ with st.container():
     ax.grid(True, linestyle='--', alpha=0.7)
     st.pyplot(fig)
 
-# Multi-Site LIGO Data Overlay
+# ===================== Multi-Site LIGO Data Overlay =====================
 with st.container():
     st.subheader("Multi-Site Gravitational Wave Signal Overlay")
     fig, ax = plt.subplots(figsize=(10, 4))
@@ -105,7 +103,7 @@ with st.container():
     ax.grid(True, linestyle='--', alpha=0.7)
     st.pyplot(fig)
 
-# Research Graphs
+# ===================== Research Graphs =====================
 st.subheader("False Alarm Rate Over Time")
 fig2, ax2 = plt.subplots(figsize=(8, 4))
 ax2.plot(ligo_df["Timestamp"], ligo_df["False Alarm Rate"], marker='o', linestyle='-', color='red', alpha=0.7, label="False Alarm Rate")
@@ -124,7 +122,7 @@ ax3.set_ylabel("Number of Events")
 ax3.grid(True, linestyle='--', alpha=0.6)
 st.pyplot(fig3)
 
-# Auto-Refresh Control
+# ===================== Auto-Refresh Control =====================
 if auto_refresh:
     time.sleep(5)
     st.rerun()

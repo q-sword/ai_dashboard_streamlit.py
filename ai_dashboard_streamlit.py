@@ -8,6 +8,8 @@ from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
 import requests
 import pandas as pd
 import time
+from sklearn.metrics import mean_squared_error
+from scipy.stats import norm
 
 # ===================== Fetch Real LIGO/VIRGO Data =====================
 @st.cache_data(ttl=300)  # Cache data for 5 minutes to prevent API overload
@@ -96,6 +98,18 @@ def generate_ai_forecast_with_ligo():
 # Generate AI forecast with LIGO data
 x_future, y_future_pred = generate_ai_forecast_with_ligo()
 
+# ===================== AI Prediction Accuracy & Probabilistic Analysis =====================
+def calculate_accuracy(true_values, predicted_values):
+    return mean_squared_error(true_values, predicted_values) ** 0.5  # RMSE Calculation
+
+def event_probability(false_alarm_rate):
+    return 1 - norm.cdf(false_alarm_rate, loc=0, scale=1)  # Probability estimation
+
+accuracy_score = calculate_accuracy(x_future, y_future_pred)
+if not ligo_df.empty and "False Alarm Rate" in ligo_df.columns:
+    probabilities = ligo_df["False Alarm Rate"].apply(event_probability)
+    ligo_df["Event Probability"] = probabilities
+
 # ===================== Real-Time AI Web Interface =====================
 st.title("🚀 AI-Powered Real-Time Gravitational Wave Monitoring")
 
@@ -115,7 +129,7 @@ st.pyplot(fig)
 
 st.subheader("🔮 AI-Powered Gravitational Wave Forecasting with LIGO Data")
 fig, ax = plt.subplots()
-ax.plot(x_future, y_future_pred, label="LIGO-Based AI Prediction", color='purple')
+ax.plot(x_future, y_future_pred, label=f"LIGO-Based AI Prediction (RMSE: {accuracy_score:.4f})", color='purple')
 ax.set_xlabel("Time")
 ax.set_ylabel("Amplitude")
 ax.legend()
@@ -125,6 +139,8 @@ st.sidebar.header("AI-Powered Research Insights")
 st.sidebar.write("""
 - ✅ **Real-time anomaly detection integrated**
 - ✅ **LIGO-based AI gravitational wave forecasting added**
+- ✅ **AI Prediction Accuracy Score (RMSE)**
+- ✅ **Event Probability Estimations**
 """)
 
 # ===================== Auto-Refresh Every Few Seconds =====================

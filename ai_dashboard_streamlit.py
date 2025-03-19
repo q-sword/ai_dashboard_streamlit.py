@@ -88,6 +88,31 @@ ax.legend()
 ax.grid(True, linestyle='--', alpha=0.7)
 st.pyplot(fig)
 
+# ===================== String Theory & Quantum Flux Overlay =====================
+st.subheader("🌌 String Theory Resonance & Quantum Flux Overlay")
+fig, ax = plt.subplots(figsize=(10, 4))
+t_quantum = np.linspace(0, 10, 1000)
+ax.plot(t_quantum, np.sin(2 * np.pi * t_quantum) + 0.5 * np.sin(4 * np.pi * t_quantum), label="String Theory Resonance", color='gold', linewidth=2)
+ax.plot(t_quantum, np.sin(2 * np.pi * t_quantum) * np.exp(-0.2 * t_quantum), label="Quantum Fluctuations", color='cyan', linestyle='dashed', linewidth=2)
+ax.set_xlabel("Time")
+ax.set_ylabel("Amplitude")
+ax.set_title("String Theory Vibrations & Quantum Flux Tracking")
+ax.legend()
+ax.grid(True, linestyle='--', alpha=0.7)
+st.pyplot(fig)
+
+# ===================== Quantum AI Wavefunction Evolution =====================
+st.subheader("🔬 Quantum AI-Driven Wavefunction Evolution")
+x_grid = np.linspace(-5, 5, 200)
+fig, ax = plt.subplots(figsize=(10, 4))
+ax.plot(x_grid, np.exp(-x_grid**2), label="Quantum Wavefunction", color='magenta', linewidth=2)
+ax.set_xlabel("Position")
+ax.set_ylabel("Probability Density")
+ax.set_title("Quantum Wavefunction Evolution (AI-Driven Schrödinger Solution)")
+ax.legend()
+ax.grid(True, linestyle='--', alpha=0.7)
+st.pyplot(fig)
+
 # ===================== Auto-Refresh Every Few Seconds Without Removing Graphs =====================
 if "last_update" not in st.session_state:
     st.session_state.last_update = time.time()

@@ -4,7 +4,7 @@ import streamlit as st
 if "config_set" not in st.session_state:
     st.set_page_config(
         layout="wide",
-        page_title="AI-Powered Gravitational Wave & Quantum AI Navigation",
+        page_title="AI-Powered Gravitational Wave, Quantum AI, & Cosmic Research",
         page_icon="🌌"
     )
     st.session_state["config_set"] = True  # Prevents multiple calls to set_page_config
@@ -87,6 +87,23 @@ ax.set_title("Gravitational Waveform Prediction vs. LIGO Data")
 ax.legend()
 ax.grid(True, linestyle='--', alpha=0.7)
 st.pyplot(fig)
+
+# ===================== String Theory & Quantum Fluctuation Overlay =====================
+st.subheader("🌌 String Theory Resonance & Quantum Fluctuation Overlay")
+fig, ax = plt.subplots(figsize=(10, 4))
+t_quantum = np.linspace(0, 10, 1000)
+ax.plot(t_quantum, np.sin(2 * np.pi * t_quantum) + 0.5 * np.sin(4 * np.pi * t_quantum), label="String Theory Resonance", color='gold', linewidth=2)
+ax.plot(t_quantum, np.sin(2 * np.pi * t_quantum) * np.exp(-0.2 * t_quantum), label="Quantum Fluctuations", color='cyan', linestyle='dashed', linewidth=2)
+ax.set_xlabel("Time")
+ax.set_ylabel("Amplitude")
+ax.set_title("String Theory Vibrations & Quantum Fluctuation Tracking")
+ax.legend()
+ax.grid(True, linestyle='--', alpha=0.7)
+st.pyplot(fig)
+
+# ===================== Data Dashboards =====================
+st.subheader("📊 AI-Powered Research Dashboards")
+st.dataframe(ligo_df, use_container_width=True)
 
 # ===================== Auto-Refresh Every Few Seconds =====================
 if "last_update" not in st.session_state:

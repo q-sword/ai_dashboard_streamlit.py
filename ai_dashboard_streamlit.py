@@ -1,11 +1,13 @@
 import streamlit as st
 
-# ===================== Ensure Page Configuration is First =====================
-st.set_page_config(
-    layout="wide", 
-    page_title="AI-Powered Gravitational Wave Analysis", 
-    page_icon="🌌"
-)
+# Ensure Page Configuration is First
+if "config_set" not in st.session_state:
+    st.set_page_config(
+        layout="wide",
+        page_title="AI-Powered Gravitational Wave Analysis",
+        page_icon="🌌"
+    )
+    st.session_state["config_set"] = True  # Prevents multiple calls to set_page_config
 
 # Now import the necessary libraries
 import numpy as np
@@ -19,6 +21,7 @@ import pandas as pd
 import time
 from sklearn.metrics import mean_squared_error
 from scipy.stats import norm
+
 
 # ===================== Fetch Real LIGO/VIRGO Data =====================
 @st.cache_data(ttl=300)

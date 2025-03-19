@@ -23,91 +23,44 @@ from sklearn.metrics import mean_squared_error
 from scipy.stats import norm
 from scipy.integrate import solve_ivp
 
-# ===================== Fetch Real LIGO/VIRGO Data =====================
-@st.cache_data(ttl=300)
-def fetch_ligo_data():
-    url = "https://www.gw-openscience.org/eventapi/json/"
-    response = requests.get(url)
-    if response.status_code == 200:
-        data = response.json()
-        events = data.get("events", {})
-        if not events:
-            st.warning("⚠️ No recent gravitational wave detections available from LIGO API.")
-            return fetch_historical_ligo_data()
-        df = pd.DataFrame(events).T
-        expected_columns = ['GPS', 'FAR', 'Mtotal', 'Instruments']
-        available_columns = [col for col in expected_columns if col in df.columns]
-        if not available_columns:
-            st.warning("⚠️ LIGO API structure changed. Using fallback historical data.")
-            return fetch_historical_ligo_data()
-        df = df[available_columns]
-        column_renames = {'GPS': 'Timestamp', 'FAR': 'False Alarm Rate', 'Mtotal': 'Total Mass', 'Instruments': 'Detected By'}
-        df = df.rename(columns={col: column_renames[col] for col in available_columns if col in column_renames})
-        return df
-    else:
-        st.warning("⚠️ Failed to connect to LIGO API. Using fallback historical data.")
-        return fetch_historical_ligo_data()
+# ===================== Quantum Mechanics Constants =====================
+hbar = 1.0  # Reduced Planck’s constant
+m = 1.0  # Mass
+dt = 0.01  # Time step
+gamma_i = 0.05  # Damping Coefficient
+alpha = 1.2  # Alpha Parameter
 
-@st.cache_data
-def fetch_historical_ligo_data():
-    return pd.DataFrame({
-        "Timestamp": np.linspace(0, 10, 100),
-        "False Alarm Rate": np.random.uniform(1e-8, 1e-5, 100),
-        "Total Mass": np.random.uniform(10, 80, 100),
-        "Detected By": np.random.choice(["LIGO-Hanford", "LIGO-Livingston", "LIGO-Virgo"], 100)
-    })
+# ===================== Quantum Potential and Wavefunction =====================
+def quantum_potential(x):
+    return alpha * np.sin(x)**2  # Sample quantum potential function
 
-ligo_df = fetch_ligo_data()
+def schrodinger_rhs(t, psi, x_grid):
+    kinetic = -0.5 * hbar * np.gradient(np.gradient(psi, x_grid), x_grid) / m
+    potential = quantum_potential(x_grid) * psi
+    return -1j / hbar * (kinetic + potential)
 
-# ===================== Multi-Site LIGO Data Overlay =====================
-st.subheader("📡 Multi-Site Gravitational Wave Signal Overlay")
-fig, ax = plt.subplots(figsize=(10, 4))
-for site in ligo_df["Detected By"].unique():
-    site_data = ligo_df[ligo_df["Detected By"] == site]
-    if "Timestamp" in site_data.columns:
-        ax.plot(site_data["Timestamp"], np.sin(2 * np.pi * site_data["Timestamp"]), label=f"{site} Signal")
-ax.set_xlabel("Time")
-ax.set_ylabel("Amplitude")
-ax.set_title("Gravitational Wave Signals Across Multiple LIGO Sites")
-ax.legend()
-ax.grid(True, linestyle='--', alpha=0.7)
-st.pyplot(fig)
+def solve_schrodinger():
+    x_grid = np.linspace(-5, 5, 200)
+    psi_init = np.exp(-x_grid**2) * np.exp(1j * x_grid)
+    sol = solve_ivp(lambda t, y: schrodinger_rhs(t, y, x_grid), [0, 2], psi_init.ravel(), t_eval=np.linspace(0, 2, 100))
+    return x_grid, sol.y
 
-# ===================== AI vs. LIGO Waveform Comparison =====================
-st.subheader("🌊 AI vs. LIGO Waveform Comparison")
-fig, ax = plt.subplots(figsize=(10, 4))
-x_future = np.linspace(0, 10, 1000)
-ax.plot(x_future, np.sin(2 * np.pi * x_future), label="AI-Predicted GW Waveform", color='purple', linewidth=2)
-if not ligo_df.empty and "Timestamp" in ligo_df.columns:
-    ligo_waveform = np.sin(2 * np.pi * ligo_df["Timestamp"])
-    ax.plot(ligo_df["Timestamp"], ligo_waveform, label="Actual LIGO Waveform", color='blue', linestyle='dashed', linewidth=2)
-ax.set_xlabel("Time")
-ax.set_ylabel("Amplitude")
-ax.set_title("Gravitational Waveform Prediction vs. LIGO Data")
-ax.legend()
-ax.grid(True, linestyle='--', alpha=0.7)
-st.pyplot(fig)
+# Solve and visualize quantum wavefunction evolution
+x_grid, psi_solutions = solve_schrodinger()
 
-# ===================== String Theory & Quantum Flux Overlay =====================
-st.subheader("🌌 String Theory Resonance & Quantum Flux Overlay")
-fig, ax = plt.subplots(figsize=(10, 4))
-t_quantum = np.linspace(0, 10, 1000)
-ax.plot(t_quantum, np.sin(2 * np.pi * t_quantum) + 0.5 * np.sin(4 * np.pi * t_quantum), label="String Theory Resonance", color='gold', linewidth=2)
-ax.plot(t_quantum, np.sin(2 * np.pi * t_quantum) * np.exp(-0.2 * t_quantum), label="Quantum Fluctuations", color='cyan', linestyle='dashed', linewidth=2)
-ax.set_xlabel("Time")
-ax.set_ylabel("Amplitude")
-ax.set_title("String Theory Vibrations & Quantum Flux Tracking")
-ax.legend()
-ax.grid(True, linestyle='--', alpha=0.7)
-st.pyplot(fig)
+# ===================== Fix: Ensure Quantum Graphs Always Display =====================
+st.subheader("🔬 Quantum AI-Driven Wavefunction Evolution")
+quantum_placeholder = st.empty()
 
-# ===================== Research Dashboards =====================
-st.subheader("📊 AI-Powered Research Dashboards")
-st.write("### 📡 Full LIGO Data")
-st.dataframe(ligo_df, use_container_width=True)
-st.write("### 🚨 Anomalous Events Detected (Potential New Physics)")
-anomalies = ligo_df[ligo_df["Total Mass"] > (ligo_df["Total Mass"].mean() + 3 * ligo_df["Total Mass"].std())]
-st.dataframe(anomalies, use_container_width=True)
+with quantum_placeholder.container():
+    fig, ax = plt.subplots(figsize=(10, 4))
+    ax.plot(x_grid, np.abs(psi_solutions[:, -1])**2, label="Final Quantum State", color='magenta', linewidth=2)
+    ax.set_xlabel("Position")
+    ax.set_ylabel("Probability Density")
+    ax.set_title("Quantum Wavefunction Evolution (AI-Driven Schrödinger Solution)")
+    ax.legend()
+    ax.grid(True, linestyle='--', alpha=0.7)
+    st.pyplot(fig)
 
 # ===================== Auto-Refresh Every Few Seconds Without Removing Graphs =====================
 if "last_update" not in st.session_state:

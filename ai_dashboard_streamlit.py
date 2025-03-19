@@ -59,6 +59,18 @@ def fetch_historical_ligo_data():
 
 ligo_df = fetch_ligo_data()
 
+# ===================== Classification of Events: Low, Medium, High =====================
+def classify_events(df, sensitivity_threshold):
+    df["Event Classification"] = "Low"
+    df.loc[df["False Alarm Rate"] < sensitivity_threshold * 1e-6, "Event Classification"] = "Medium"
+    df.loc[df["False Alarm Rate"] < sensitivity_threshold * 1e-8, "Event Classification"] = "High"
+    return df
+
+# Sensitivity Slider
+st.sidebar.subheader("🔧 Sensitivity Settings")
+sensitivity_threshold = st.sidebar.slider("Set Sensitivity Level", 0.1, 10.0, 1.0)
+ligo_df = classify_events(ligo_df, sensitivity_threshold)
+
 # ===================== Multi-Site LIGO Data Overlay =====================
 st.subheader("📡 Multi-Site Gravitational Wave Signal Overlay")
 fig, ax = plt.subplots(figsize=(10, 4))
@@ -88,20 +100,7 @@ ax.legend()
 ax.grid(True, linestyle='--', alpha=0.7)
 st.pyplot(fig)
 
-# ===================== String Theory & Quantum Fluctuation Overlay =====================
-st.subheader("🌌 String Theory Resonance & Quantum Fluctuation Overlay")
-fig, ax = plt.subplots(figsize=(10, 4))
-t_quantum = np.linspace(0, 10, 1000)
-ax.plot(t_quantum, np.sin(2 * np.pi * t_quantum) + 0.5 * np.sin(4 * np.pi * t_quantum), label="String Theory Resonance", color='gold', linewidth=2)
-ax.plot(t_quantum, np.sin(2 * np.pi * t_quantum) * np.exp(-0.2 * t_quantum), label="Quantum Fluctuations", color='cyan', linestyle='dashed', linewidth=2)
-ax.set_xlabel("Time")
-ax.set_ylabel("Amplitude")
-ax.set_title("String Theory Vibrations & Quantum Fluctuation Tracking")
-ax.legend()
-ax.grid(True, linestyle='--', alpha=0.7)
-st.pyplot(fig)
-
-# ===================== Data Dashboards =====================
+# ===================== Research Dashboards =====================
 st.subheader("📊 AI-Powered Research Dashboards")
 st.dataframe(ligo_df, use_container_width=True)
 

@@ -48,6 +48,31 @@ def solve_schrodinger():
 # Solve and visualize quantum wavefunction evolution
 x_grid, psi_solutions = solve_schrodinger()
 
+# ===================== String Theory & Quantum Flux Overlay =====================
+def string_theory_resonance(t):
+    return np.sin(2 * np.pi * t) + 0.5 * np.sin(4 * np.pi * t) + 0.2 * np.sin(6 * np.pi * t)
+
+def quantum_fluctuation_model(t):
+    return np.sin(2 * np.pi * t) * np.exp(-0.2 * t) + np.random.normal(scale=0.05, size=len(t))
+
+t_quantum = np.linspace(0, 10, 1000)
+string_resonance = string_theory_resonance(t_quantum)
+quantum_fluctuations = quantum_fluctuation_model(t_quantum)
+
+st.subheader("🌌 String Theory Resonance & Quantum Flux Overlay")
+string_quantum_placeholder = st.empty()
+
+with string_quantum_placeholder.container():
+    fig, ax = plt.subplots(figsize=(10, 4))
+    ax.plot(t_quantum, string_resonance, label="String Theory Resonance", color='gold', linewidth=2)
+    ax.plot(t_quantum, quantum_fluctuations, label="Quantum Fluctuations", color='cyan', linestyle='dashed', linewidth=2)
+    ax.set_xlabel("Time")
+    ax.set_ylabel("Amplitude")
+    ax.set_title("String Theory Vibrations & Quantum Flux Tracking")
+    ax.legend()
+    ax.grid(True, linestyle='--', alpha=0.7)
+    st.pyplot(fig)
+
 # ===================== Fix: Keep Quantum Graphs Always Visible =====================
 st.subheader("🔬 Quantum AI-Driven Wavefunction Evolution")
 quantum_placeholder = st.empty()
@@ -62,7 +87,7 @@ with quantum_placeholder.container():
     ax.grid(True, linestyle='--', alpha=0.7)
     st.pyplot(fig)
 
-# ===================== Auto-Refresh Every Few Seconds Without Removing Quantum Graphs =====================
+# ===================== Auto-Refresh Every Few Seconds Without Removing Graphs =====================
 if "last_update" not in st.session_state:
     st.session_state.last_update = time.time()
 

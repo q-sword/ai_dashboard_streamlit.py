@@ -59,50 +59,17 @@ def fetch_historical_ligo_data():
 
 ligo_df = fetch_ligo_data()
 
-# ===================== Multi-Site LIGO Data Overlay =====================
-st.subheader("📡 Multi-Site Gravitational Wave Signal Overlay")
-fig, ax = plt.subplots(figsize=(10, 4))
-for site in ligo_df["Detected By"].unique():
-    site_data = ligo_df[ligo_df["Detected By"] == site]
-    if "Timestamp" in site_data.columns:
-        ax.plot(site_data["Timestamp"], np.sin(2 * np.pi * site_data["Timestamp"]), label=f"{site} Signal")
-ax.set_xlabel("Time")
-ax.set_ylabel("Amplitude")
-ax.set_title("Gravitational Wave Signals Across Multiple LIGO Sites")
-ax.legend()
-ax.grid(True, linestyle='--', alpha=0.7)
-st.pyplot(fig)
+# ===================== Research Dashboards =====================
+st.subheader("📊 AI-Powered Research Dashboards")
+research_placeholder = st.empty()
 
-# ===================== String Theory & Quantum Flux Overlay =====================
-st.subheader("🌌 String Theory Resonance & Quantum Flux Overlay")
-string_quantum_placeholder = st.empty()
-
-with string_quantum_placeholder.container():
-    fig, ax = plt.subplots(figsize=(10, 4))
-    t_quantum = np.linspace(0, 10, 1000)
-    ax.plot(t_quantum, np.sin(2 * np.pi * t_quantum) + 0.5 * np.sin(4 * np.pi * t_quantum), label="String Theory Resonance", color='gold', linewidth=2)
-    ax.plot(t_quantum, np.sin(2 * np.pi * t_quantum) * np.exp(-0.2 * t_quantum), label="Quantum Fluctuations", color='cyan', linestyle='dashed', linewidth=2)
-    ax.set_xlabel("Time")
-    ax.set_ylabel("Amplitude")
-    ax.set_title("String Theory Vibrations & Quantum Flux Tracking")
-    ax.legend()
-    ax.grid(True, linestyle='--', alpha=0.7)
-    st.pyplot(fig)
-
-# ===================== Fix: Keep Quantum Graphs Always Visible =====================
-st.subheader("🔬 Quantum AI-Driven Wavefunction Evolution")
-quantum_placeholder = st.empty()
-
-with quantum_placeholder.container():
-    fig, ax = plt.subplots(figsize=(10, 4))
-    x_grid = np.linspace(-5, 5, 200)
-    ax.plot(x_grid, np.exp(-x_grid**2), label="Quantum Wavefunction", color='magenta', linewidth=2)
-    ax.set_xlabel("Position")
-    ax.set_ylabel("Probability Density")
-    ax.set_title("Quantum Wavefunction Evolution (AI-Driven Schrödinger Solution)")
-    ax.legend()
-    ax.grid(True, linestyle='--', alpha=0.7)
-    st.pyplot(fig)
+with research_placeholder.container():
+    st.write("### 📡 Full LIGO Data")
+    st.dataframe(ligo_df, use_container_width=True)
+    
+    st.write("### 🚨 Anomalous Events Detected (Potential New Physics)")
+    anomalies = ligo_df[ligo_df["Total Mass"] > (ligo_df["Total Mass"].mean() + 3 * ligo_df["Total Mass"].std())]
+    st.dataframe(anomalies, use_container_width=True)
 
 # ===================== Auto-Refresh Every Few Seconds Without Removing Graphs =====================
 if "last_update" not in st.session_state:

@@ -48,16 +48,19 @@ def solve_schrodinger():
 # Solve and visualize quantum wavefunction evolution
 x_grid, psi_solutions = solve_schrodinger()
 
-# ===================== Streamlit Quantum Wavefunction Display =====================
-st.subheader("🔬 Quantum AI-Driven Wavefunction Evolution")
-fig, ax = plt.subplots(figsize=(10, 4))
-ax.plot(x_grid, np.abs(psi_solutions[:, -1])**2, label="Final Quantum State", color='magenta', linewidth=2)
-ax.set_xlabel("Position")
-ax.set_ylabel("Probability Density")
-ax.set_title("Quantum Wavefunction Evolution (AI-Driven Schrödinger Solution)")
-ax.legend()
-ax.grid(True, linestyle='--', alpha=0.7)
-st.pyplot(fig)
+# ===================== Fix: Ensure Only One Graph Appears =====================
+placeholder = st.empty()  # Clears previous graphs before rendering new ones
+
+with placeholder.container():
+    st.subheader("🔬 Quantum AI-Driven Wavefunction Evolution")
+    fig, ax = plt.subplots(figsize=(10, 4))
+    ax.plot(x_grid, np.abs(psi_solutions[:, -1])**2, label="Final Quantum State", color='magenta', linewidth=2)
+    ax.set_xlabel("Position")
+    ax.set_ylabel("Probability Density")
+    ax.set_title("Quantum Wavefunction Evolution (AI-Driven Schrödinger Solution)")
+    ax.legend()
+    ax.grid(True, linestyle='--', alpha=0.7)
+    st.pyplot(fig)
 
 # ===================== Auto-Refresh Every Few Seconds =====================
 if "last_update" not in st.session_state:

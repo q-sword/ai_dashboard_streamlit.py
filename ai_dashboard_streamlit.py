@@ -1,6 +1,6 @@
 import streamlit as st
 
-# Ensure Page Configuration is First
+# ===================== Ensure Page Configuration is First =====================
 if "config_set" not in st.session_state:
     st.set_page_config(
         layout="wide",
@@ -21,7 +21,6 @@ import pandas as pd
 import time
 from sklearn.metrics import mean_squared_error
 from scipy.stats import norm
-
 
 # ===================== Fetch Real LIGO/VIRGO Data =====================
 @st.cache_data(ttl=300)
@@ -83,37 +82,24 @@ def generate_ai_forecast_with_ligo():
 
 x_future, y_future_pred = generate_ai_forecast_with_ligo()
 
-# ===================== Advanced Anomaly Classification =====================
-def classify_anomalies(signal):
-    thresholds = [0.6, 0.8]  # Define classification thresholds
-    classifications = ["Low", "Medium", "High"]
-    return [classifications[sum(s > t for t in thresholds)] for s in signal]
+# ===================== Advanced Multi-Site LIGO Validation =====================
+def multi_site_comparison():
+    st.subheader("📡 Multi-Site Gravitational Wave Signal Overlay")
+    fig, ax = plt.subplots(figsize=(10, 4))
+    for site in ligo_df["Detected By"].unique():
+        site_data = ligo_df[ligo_df["Detected By"] == site]
+        if "Timestamp" in site_data.columns:
+            ax.plot(site_data["Timestamp"], np.sin(2 * np.pi * site_data["Timestamp"]), label=f"{site} Signal")
+    ax.set_xlabel("Time")
+    ax.set_ylabel("Amplitude")
+    ax.set_title("Gravitational Wave Signals Across Multiple LIGO Sites")
+    ax.legend()
+    ax.grid(True, linestyle='--', alpha=0.7)
+    st.pyplot(fig)
 
-gw_anomaly_classification = classify_anomalies(gw_ai_anomaly_monitor)
-ligo_df["Anomaly Classification"] = gw_anomaly_classification[: len(ligo_df)]
+multi_site_comparison()
 
-# ===================== UI Improvements =====================
-st.sidebar.header("🔧 Dashboard Settings")
-thresh = st.sidebar.slider("Anomaly Detection Threshold", 0.5, 1.0, 0.75)
-event_filter = st.sidebar.selectbox("Filter Events By Detection Site", ["All"] + ligo_df["Detected By"].unique().tolist())
-
-st.title("🚀 AI-Powered Real-Time Gravitational Wave Monitoring")
-st.markdown("---")
-
-if event_filter != "All":
-    filtered_ligo_df = ligo_df[ligo_df["Detected By"] == event_filter]
-else:
-    filtered_ligo_df = ligo_df
-
-col1, col2 = st.columns([2, 1])
-with col1:
-    st.subheader("🌌 LIGO/VIRGO Data")
-    st.dataframe(filtered_ligo_df)
-with col2:
-    st.subheader("🔎 AI Insights")
-    st.metric("AI Prediction Accuracy (RMSE)", f"{mean_squared_error(x_future, y_future_pred) ** 0.5:.4f}")
-
-# Proper Waveform Display
+# ===================== AI vs. LIGO Waveform Comparison =====================
 st.markdown("---")
 st.subheader("🌊 AI vs. LIGO Waveform Comparison")
 fig, ax = plt.subplots(figsize=(8, 4))

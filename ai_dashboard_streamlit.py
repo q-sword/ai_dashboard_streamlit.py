@@ -7,18 +7,7 @@ st.set_page_config(
     page_icon="🌌"
 )
 
-import numpy as np
-import matplotlib.pyplot as plt
-import tensorflow as tf
-from tensorflow import keras
-from tensorflow.keras.layers import LSTM, Dense, Dropout, Bidirectional
-from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
-import requests
-import pandas as pd
-import time
-from sklearn.metrics import mean_squared_error
-from scipy.stats import norm
-import streamlit as st
+# Now import the necessary libraries
 import numpy as np
 import matplotlib.pyplot as plt
 import tensorflow as tf
@@ -119,7 +108,6 @@ def generate_ai_forecast_with_ligo():
 x_future, y_future_pred = generate_ai_forecast_with_ligo()
 
 # ===================== Streamlit UI =====================
-st.set_page_config(layout="wide", page_title="AI-Powered Gravitational Wave Analysis", page_icon="🌌")
 st.sidebar.header("🔧 Dashboard Settings")
 thresh = st.sidebar.slider("Anomaly Detection Threshold", 0.5, 1.0, 0.75)
 
@@ -155,19 +143,9 @@ ax.set_ylabel("Amplitude")
 ax.legend()
 st.pyplot(fig)
 
-st.sidebar.markdown("---")
-st.sidebar.header("📊 AI-Powered Research Insights")
-st.sidebar.write("""
-- ✅ **Real-time anomaly detection integrated**
-- ✅ **LIGO-based AI gravitational wave forecasting added**
-- ✅ **AI Prediction Accuracy Score (RMSE)**
-- ✅ **Interactive UI & Expanded Dashboard**
-""")
-
 # ===================== Auto-Refresh Every Few Seconds =====================
 if "last_update" not in st.session_state:
     st.session_state.last_update = time.time()
 
-# Auto-refresh workaround (instead of st.experimental_rerun)
 time.sleep(5)  # Wait 5 seconds before refresh
 st.rerun()

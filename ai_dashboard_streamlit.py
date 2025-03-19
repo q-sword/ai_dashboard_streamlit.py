@@ -49,10 +49,12 @@ def solve_schrodinger():
 x_grid, psi_solutions = solve_schrodinger()
 
 # ===================== Fix: Ensure Only One Graph Appears =====================
-placeholder = st.empty()  # Clears previous graphs before rendering new ones
+w_wavefunction_placeholder = st.empty()  # Create a container to hold the visualization
 
-with placeholder.container():
+with w_wavefunction_placeholder.container():
     st.subheader("🔬 Quantum AI-Driven Wavefunction Evolution")
+
+    # Clear previous figure before rendering a new one
     fig, ax = plt.subplots(figsize=(10, 4))
     ax.plot(x_grid, np.abs(psi_solutions[:, -1])**2, label="Final Quantum State", color='magenta', linewidth=2)
     ax.set_xlabel("Position")
@@ -60,7 +62,8 @@ with placeholder.container():
     ax.set_title("Quantum Wavefunction Evolution (AI-Driven Schrödinger Solution)")
     ax.legend()
     ax.grid(True, linestyle='--', alpha=0.7)
-    st.pyplot(fig)
+    
+    w_wavefunction_placeholder.pyplot(fig)  # Render the figure in the placeholder
 
 # ===================== Auto-Refresh Every Few Seconds =====================
 if "last_update" not in st.session_state:

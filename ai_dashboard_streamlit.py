@@ -4,7 +4,7 @@ import streamlit as st
 if "config_set" not in st.session_state:
     st.set_page_config(
         layout="wide",
-        page_title="AI-Powered Gravitational Wave Analysis",
+        page_title="AI-Powered Gravitational Wave & String Theory Analysis",
         page_icon="🌌"
     )
     st.session_state["config_set"] = True  # Prevents multiple calls to set_page_config
@@ -82,34 +82,24 @@ def generate_ai_forecast_with_ligo():
 
 x_future, y_future_pred = generate_ai_forecast_with_ligo()
 
-# ===================== Advanced Multi-Site LIGO Validation =====================
-def multi_site_comparison():
-    st.subheader("📡 Multi-Site Gravitational Wave Signal Overlay")
-    fig, ax = plt.subplots(figsize=(10, 4))
-    for site in ligo_df["Detected By"].unique():
-        site_data = ligo_df[ligo_df["Detected By"] == site]
-        if "Timestamp" in site_data.columns:
-            ax.plot(site_data["Timestamp"], np.sin(2 * np.pi * site_data["Timestamp"]), label=f"{site} Signal")
-    ax.set_xlabel("Time")
-    ax.set_ylabel("Amplitude")
-    ax.set_title("Gravitational Wave Signals Across Multiple LIGO Sites")
-    ax.legend()
-    ax.grid(True, linestyle='--', alpha=0.7)
-    st.pyplot(fig)
+# ===================== Advanced String Theory & Quantum Analysis =====================
+def string_theory_resonance(t):
+    return np.sin(2 * np.pi * t) + 0.5 * np.sin(4 * np.pi * t) + 0.2 * np.sin(6 * np.pi * t)
 
-multi_site_comparison()
+def quantum_fluctuation_model(t):
+    return np.sin(2 * np.pi * t) * np.exp(-0.2 * t) + np.random.normal(scale=0.05, size=len(t))
 
-# ===================== AI vs. LIGO Waveform Comparison =====================
-st.markdown("---")
-st.subheader("🌊 AI vs. LIGO Waveform Comparison")
-fig, ax = plt.subplots(figsize=(8, 4))
-ax.plot(x_future, np.sin(2 * np.pi * x_future), label="AI-Predicted GW Waveform", color='purple', linewidth=2)
-if not ligo_df.empty and "Timestamp" in ligo_df.columns:
-    ligo_waveform = np.sin(2 * np.pi * ligo_df["Timestamp"])
-    ax.plot(ligo_df["Timestamp"], ligo_waveform, label="Actual LIGO Waveform", color='blue', linestyle='dashed', linewidth=2)
+t_quantum = np.linspace(0, 10, 1000)
+string_resonance = string_theory_resonance(t_quantum)
+quantum_fluctuations = quantum_fluctuation_model(t_quantum)
+
+st.subheader("🌌 Extra-Dimensional & Quantum Analysis")
+fig, ax = plt.subplots(figsize=(10, 4))
+ax.plot(t_quantum, string_resonance, label="String Theory Resonance", color='gold', linewidth=2)
+ax.plot(t_quantum, quantum_fluctuations, label="Quantum Fluctuations", color='cyan', linestyle='dashed', linewidth=2)
 ax.set_xlabel("Time")
 ax.set_ylabel("Amplitude")
-ax.set_title("Gravitational Waveform Prediction vs. LIGO Data")
+ax.set_title("String Theory Vibrations & Quantum Fluctuation Tracking")
 ax.legend()
 ax.grid(True, linestyle='--', alpha=0.7)
 st.pyplot(fig)

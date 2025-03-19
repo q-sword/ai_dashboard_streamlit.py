@@ -4,7 +4,7 @@ import streamlit as st
 if "config_set" not in st.session_state:
     st.set_page_config(
         layout="wide",
-        page_title="AI-Powered Gravitational Wave, Quantum AI, & Cosmic Research",
+        page_title="AI-Powered Gravitational Wave, Quantum AI, & New Physics Research",
         page_icon="🌌"
     )
     st.session_state["config_set"] = True  # Prevents multiple calls to set_page_config
@@ -71,6 +71,14 @@ st.sidebar.subheader("🔧 Sensitivity Settings")
 sensitivity_threshold = st.sidebar.slider("Set Sensitivity Level", 0.1, 10.0, 1.0)
 ligo_df = classify_events(ligo_df, sensitivity_threshold)
 
+# ===================== Anomaly Detection for New Physics =====================
+def detect_anomalies(df):
+    anomaly_threshold = df["Total Mass"].mean() + 3 * df["Total Mass"].std()
+    anomalies = df[df["Total Mass"] > anomaly_threshold]
+    return anomalies
+
+anomalous_events = detect_anomalies(ligo_df)
+
 # ===================== Multi-Site LIGO Data Overlay =====================
 st.subheader("📡 Multi-Site Gravitational Wave Signal Overlay")
 fig, ax = plt.subplots(figsize=(10, 4))
@@ -103,6 +111,8 @@ st.pyplot(fig)
 # ===================== Research Dashboards =====================
 st.subheader("📊 AI-Powered Research Dashboards")
 st.dataframe(ligo_df, use_container_width=True)
+st.subheader("🚨 Anomalous Events Detected (Potential New Physics)")
+st.dataframe(anomalous_events, use_container_width=True)
 
 # ===================== Auto-Refresh Every Few Seconds =====================
 if "last_update" not in st.session_state:

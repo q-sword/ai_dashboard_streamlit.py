@@ -59,6 +59,14 @@ def fetch_historical_ligo_data():
 
 ligo_df = fetch_ligo_data()
 
+# ===================== Deep Anomaly Detection =====================
+def detect_anomalies(df):
+    anomaly_threshold = df["Total Mass"].mean() + 3 * df["Total Mass"].std()
+    anomalies = df[df["Total Mass"] > anomaly_threshold]
+    return anomalies
+
+anomalous_events = detect_anomalies(ligo_df)
+
 # ===================== Multi-Site LIGO/VIRGO Data Overlay =====================
 st.subheader("📡 Multi-Site LIGO/VIRGO Gravitational Wave Signal Overlay")
 fig, ax = plt.subplots(figsize=(10, 4))
@@ -101,17 +109,12 @@ ax.legend()
 ax.grid(True, linestyle='--', alpha=0.7)
 st.pyplot(fig)
 
-# ===================== Quantum AI Wavefunction Evolution =====================
-st.subheader("🔬 Quantum AI-Driven Wavefunction Evolution")
-x_grid = np.linspace(-5, 5, 200)
-fig, ax = plt.subplots(figsize=(10, 4))
-ax.plot(x_grid, np.exp(-x_grid**2), label="Quantum Wavefunction", color='magenta', linewidth=2)
-ax.set_xlabel("Position")
-ax.set_ylabel("Probability Density")
-ax.set_title("Quantum Wavefunction Evolution (AI-Driven Schrödinger Solution)")
-ax.legend()
-ax.grid(True, linestyle='--', alpha=0.7)
-st.pyplot(fig)
+# ===================== Research Dashboards =====================
+st.subheader("📊 AI-Powered Research Dashboards")
+st.write("### 📡 Full LIGO Data")
+st.dataframe(ligo_df, use_container_width=True)
+st.write("### 🚨 Anomalous Events Detected (Potential New Physics)")
+st.dataframe(anomalous_events, use_container_width=True)
 
 # ===================== Auto-Refresh Every Few Seconds Without Removing Graphs =====================
 if "last_update" not in st.session_state:

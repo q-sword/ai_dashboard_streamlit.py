@@ -67,15 +67,17 @@ gw_ai_anomaly_monitor = ai_dashboard_monitoring(t_values)
 # ===================== AI Forecasting with Real LIGO Data =====================
 @st.cache_data(ttl=300)
 def generate_ai_forecast_with_ligo():
-    if not ligo_df.empty:
+    if not ligo_df.empty and "Timestamp" in ligo_df.columns:
         timestamps = ligo_df["Timestamp"].astype(float).values  # Convert to numerical values
         event_amplitudes = np.sin(timestamps % (2 * np.pi))  # Simulate waveform based on real data
     else:
+        st.warning("⚠️ LIGO API data unavailable. Using fallback synthetic data.")
         timestamps = np.linspace(0, 2 * np.pi, 500)
-        event_amplitudes = np.sin(timestamps) + np.random.normal(scale=0.1, size=500)  # Fallback to synthetic
+        event_amplitudes = np.sin(timestamps) + np.random.normal(scale=0.1, size=500)  # Fallback synthetic data
 
     return timestamps, event_amplitudes
 
+# Generate AI forecast with LIGO data
 x_future, y_future_pred = generate_ai_forecast_with_ligo()
 
 # ===================== Real-Time AI Web Interface =====================

@@ -80,6 +80,15 @@ def generate_ai_forecast_with_ligo():
 
 x_future, y_future_pred = generate_ai_forecast_with_ligo()
 
+# ===================== Advanced Anomaly Classification =====================
+def classify_anomalies(signal):
+    thresholds = [0.6, 0.8]  # Define classification thresholds
+    classifications = ["Low", "Medium", "High"]
+    return [classifications[sum(s > t for t in thresholds)] for s in signal]
+
+gw_anomaly_classification = classify_anomalies(gw_ai_anomaly_monitor)
+ligo_df["Anomaly Classification"] = gw_anomaly_classification[: len(ligo_df)]
+
 # ===================== UI Improvements =====================
 st.sidebar.header("🔧 Dashboard Settings")
 thresh = st.sidebar.slider("Anomaly Detection Threshold", 0.5, 1.0, 0.75)
@@ -88,7 +97,6 @@ event_filter = st.sidebar.selectbox("Filter Events By Detection Site", ["All"] +
 st.title("🚀 AI-Powered Real-Time Gravitational Wave Monitoring")
 st.markdown("---")
 
-# Display LIGO/VIRGO data with event filtering
 if event_filter != "All":
     filtered_ligo_df = ligo_df[ligo_df["Detected By"] == event_filter]
 else:
@@ -102,17 +110,7 @@ with col2:
     st.subheader("🔎 AI Insights")
     st.metric("AI Prediction Accuracy (RMSE)", f"{mean_squared_error(x_future, y_future_pred) ** 0.5:.4f}")
 
-# Waveform-Based Anomaly Detection
-st.markdown("---")
-st.subheader("📡 AI-Detected Gravitational Wave Anomalies")
-fig, ax = plt.subplots()
-ax.plot(t_values, gw_ai_anomaly_monitor, label="GW Anomalies", color='red')
-ax.set_xlabel("Time")
-ax.set_ylabel("Signal Strength")
-ax.legend()
-st.pyplot(fig)
-
-# Proper Waveform Comparison (Instead of Line Graph)
+# Proper Waveform Display
 st.markdown("---")
 st.subheader("🌊 AI vs. LIGO Waveform Comparison")
 fig, ax = plt.subplots(figsize=(8, 4))

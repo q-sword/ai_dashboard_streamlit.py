@@ -1,4 +1,24 @@
 import streamlit as st
+
+# ===================== Ensure Page Configuration is First =====================
+st.set_page_config(
+    layout="wide", 
+    page_title="AI-Powered Gravitational Wave Analysis", 
+    page_icon="🌌"
+)
+
+import numpy as np
+import matplotlib.pyplot as plt
+import tensorflow as tf
+from tensorflow import keras
+from tensorflow.keras.layers import LSTM, Dense, Dropout, Bidirectional
+from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
+import requests
+import pandas as pd
+import time
+from sklearn.metrics import mean_squared_error
+from scipy.stats import norm
+import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
 import tensorflow as tf

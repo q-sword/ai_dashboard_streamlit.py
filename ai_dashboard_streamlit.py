@@ -20,7 +20,7 @@ def fetch_ligo_data():
     """
     url = "https://www.gw-openscience.org/eventapi/json/"
     response = requests.get(url)
-    
+
     if response.status_code == 200:
         data = response.json()
         events = data.get("events", {})
@@ -28,20 +28,20 @@ def fetch_ligo_data():
         if not events:
             st.warning("⚠️ No recent gravitational wave detections available from LIGO API.")
             return fetch_historical_ligo_data()  # Use fallback data
-        
+
         # Convert to DataFrame
         df = pd.DataFrame(events).T  # Transpose for proper formatting
-        
+
         # Validate column existence before selecting them
         expected_columns = ['GPS', 'FAR', 'Mtotal', 'Instruments']
         available_columns = [col for col in expected_columns if col in df.columns]
-        
+
         if not available_columns:
             st.warning("⚠️ LIGO API structure changed. Using fallback historical data.")
             return fetch_historical_ligo_data()  # Use fallback data
-        
+
         df = df[available_columns]
-        
+
         # Rename columns for better readability
         column_renames = {
             'GPS': 'Timestamp',
@@ -50,7 +50,7 @@ def fetch_ligo_data():
             'Instruments': 'Detected By'
         }
         df = df.rename(columns={col: column_renames[col] for col in available_columns if col in column_renames})
-        
+
         return df
     else:
         st.warning("⚠️ Failed to connect to LIGO API. Using fallback historical data.")

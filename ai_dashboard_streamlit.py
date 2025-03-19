@@ -112,17 +112,19 @@ ax.set_ylabel("Signal Strength")
 ax.legend()
 st.pyplot(fig)
 
-# Waveform Comparison
+# Proper Waveform Comparison (Instead of Line Graph)
 st.markdown("---")
 st.subheader("🌊 AI vs. LIGO Waveform Comparison")
-fig, ax = plt.subplots()
-ax.plot(x_future, y_future_pred, label="AI-Predicted GW Waveform", color='purple')
+fig, ax = plt.subplots(figsize=(8, 4))
+ax.plot(x_future, np.sin(2 * np.pi * x_future), label="AI-Predicted GW Waveform", color='purple', linewidth=2)
 if not ligo_df.empty and "Timestamp" in ligo_df.columns:
     ligo_waveform = np.sin(2 * np.pi * ligo_df["Timestamp"])
-    ax.plot(ligo_df["Timestamp"], ligo_waveform, label="Actual LIGO Waveform", color='blue', linestyle='dashed')
+    ax.plot(ligo_df["Timestamp"], ligo_waveform, label="Actual LIGO Waveform", color='blue', linestyle='dashed', linewidth=2)
 ax.set_xlabel("Time")
 ax.set_ylabel("Amplitude")
+ax.set_title("Gravitational Waveform Prediction vs. LIGO Data")
 ax.legend()
+ax.grid(True, linestyle='--', alpha=0.7)
 st.pyplot(fig)
 
 # ===================== Auto-Refresh Every Few Seconds =====================

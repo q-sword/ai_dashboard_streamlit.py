@@ -59,6 +59,20 @@ def fetch_historical_ligo_data():
 
 ligo_df = fetch_ligo_data()
 
+# ===================== Multi-Site LIGO Data Overlay =====================
+st.subheader("📡 Multi-Site Gravitational Wave Signal Overlay")
+fig, ax = plt.subplots(figsize=(10, 4))
+for site in ligo_df["Detected By"].unique():
+    site_data = ligo_df[ligo_df["Detected By"] == site]
+    if "Timestamp" in site_data.columns:
+        ax.plot(site_data["Timestamp"], np.sin(2 * np.pi * site_data["Timestamp"]), label=f"{site} Signal")
+ax.set_xlabel("Time")
+ax.set_ylabel("Amplitude")
+ax.set_title("Gravitational Wave Signals Across Multiple LIGO Sites")
+ax.legend()
+ax.grid(True, linestyle='--', alpha=0.7)
+st.pyplot(fig)
+
 # ===================== AI vs. LIGO Waveform Comparison =====================
 st.subheader("🌊 AI vs. LIGO Waveform Comparison")
 fig, ax = plt.subplots(figsize=(10, 4))
@@ -70,33 +84,6 @@ if not ligo_df.empty and "Timestamp" in ligo_df.columns:
 ax.set_xlabel("Time")
 ax.set_ylabel("Amplitude")
 ax.set_title("Gravitational Waveform Prediction vs. LIGO Data")
-ax.legend()
-ax.grid(True, linestyle='--', alpha=0.7)
-st.pyplot(fig)
-
-# ===================== Quantum AI-Driven Wavefunction Evolution =====================
-def quantum_potential(x):
-    return 1.2 * np.sin(x)**2  # Sample quantum potential function
-
-def schrodinger_rhs(t, psi, x_grid):
-    kinetic = -0.5 * np.gradient(np.gradient(psi, x_grid), x_grid)
-    potential = quantum_potential(x_grid) * psi
-    return -1j * (kinetic + potential)
-
-def solve_schrodinger():
-    x_grid = np.linspace(-5, 5, 200)
-    psi_init = np.exp(-x_grid**2) * np.exp(1j * x_grid)
-    sol = solve_ivp(lambda t, y: schrodinger_rhs(t, y, x_grid), [0, 2], psi_init, t_eval=np.linspace(0, 2, 100))
-    return x_grid, sol.y
-
-x_grid, psi_solutions = solve_schrodinger()
-
-st.subheader("🔬 Quantum AI-Driven Wavefunction Evolution")
-fig, ax = plt.subplots(figsize=(10, 4))
-ax.plot(x_grid, np.abs(psi_solutions[:, -1])**2, label="Final Quantum State", color='magenta', linewidth=2)
-ax.set_xlabel("Position")
-ax.set_ylabel("Probability Density")
-ax.set_title("Quantum Wavefunction Evolution (AI-Driven Schrödinger Solution)")
 ax.legend()
 ax.grid(True, linestyle='--', alpha=0.7)
 st.pyplot(fig)

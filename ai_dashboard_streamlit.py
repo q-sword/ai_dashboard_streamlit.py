@@ -14,7 +14,7 @@ import time
 def fetch_ligo_data():
     """
     Fetches real gravitational wave event data from LIGO Open Science API.
-    Handles missing columns gracefully.
+    Handles missing data by providing fallback or warning messages.
     """
     url = "https://www.gw-openscience.org/eventapi/json/"
     response = requests.get(url)
@@ -22,9 +22,10 @@ def fetch_ligo_data():
     if response.status_code == 200:
         data = response.json()
         events = data.get("events", {})
-        
+
         if not events:
-            return pd.DataFrame({"Error": ["No data received from API"]})  # Handle empty API response
+            st.warning("⚠️ No recent gravitational wave detections available from LIGO API.")
+            return fetch_historical_ligo_data()  # Use fallback data
         
         # Convert to DataFrame
         df = pd.DataFrame(events).T  # Transpose for proper formatting
@@ -34,7 +35,8 @@ def fetch_ligo_data():
         available_columns = [col for col in expected_columns if col in df.columns]
         
         if not available_columns:
-            return pd.DataFrame({"Error": ["Expected columns missing from API response"]})
+            st.warning("⚠️ LIGO API structure changed. Using fallback historical data.")
+            return fetch_historical_ligo_data()  # Use fallback data
         
         df = df[available_columns]
         
@@ -49,9 +51,23 @@ def fetch_ligo_data():
         
         return df
     else:
-        return pd.DataFrame({"Error": ["Failed to connect to LIGO API"]})  # Handle API failure
+        st.warning("⚠️ Failed to connect to LIGO API. Using fallback historical data.")
+        return fetch_historical_ligo_data()
 
-# Fetch and display real LIGO data
+# ===================== Fallback Historical LIGO Data =====================
+@st.cache_data
+def fetch_historical_ligo_data():
+    """
+    Provides fallback historical gravitational wave data when LIGO API is unavailable.
+    """
+    return pd.DataFrame({
+        "Timestamp": [1126259462, 1187008882, 1238166018],  # Example GPS times
+        "False Alarm Rate": [1e-7, 3e-8, 2e-8],
+        "Total Mass": [65, 50, 85],
+        "Detected By": ["LIGO-Hanford, LIGO-Livingston", "LIGO-Virgo", "LIGO"]
+    })
+
+# Fetch and display real or fallback LIGO data
 ligo_df = fetch_ligo_data()
 
 # ===================== AI-Powered Real-Time GW Anomaly Monitoring =====================

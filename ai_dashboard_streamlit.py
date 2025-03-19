@@ -14,6 +14,7 @@ import time
 def fetch_ligo_data():
     """
     Fetches real gravitational wave event data from LIGO Open Science API.
+    Handles missing columns gracefully.
     """
     url = "https://www.gw-openscience.org/eventapi/json/"
     response = requests.get(url)
@@ -22,14 +23,33 @@ def fetch_ligo_data():
         data = response.json()
         events = data.get("events", {})
         
+        if not events:
+            return pd.DataFrame({"Error": ["No data received from API"]})  # Handle empty API response
+        
         # Convert to DataFrame
         df = pd.DataFrame(events).T  # Transpose for proper formatting
-        df = df[['GPS', 'FAR', 'Mtotal', 'Instruments']]
-        df = df.rename(columns={'GPS': 'Timestamp', 'FAR': 'False Alarm Rate', 'Mtotal': 'Total Mass', 'Instruments': 'Detected By'})
+        
+        # Validate column existence before selecting them
+        expected_columns = ['GPS', 'FAR', 'Mtotal', 'Instruments']
+        available_columns = [col for col in expected_columns if col in df.columns]
+        
+        if not available_columns:
+            return pd.DataFrame({"Error": ["Expected columns missing from API response"]})
+        
+        df = df[available_columns]
+        
+        # Rename columns for better readability
+        column_renames = {
+            'GPS': 'Timestamp',
+            'FAR': 'False Alarm Rate',
+            'Mtotal': 'Total Mass',
+            'Instruments': 'Detected By'
+        }
+        df = df.rename(columns={col: column_renames[col] for col in available_columns if col in column_renames})
         
         return df
     else:
-        return pd.DataFrame()  # Return empty if API fails
+        return pd.DataFrame({"Error": ["Failed to connect to LIGO API"]})  # Handle API failure
 
 # Fetch and display real LIGO data
 ligo_df = fetch_ligo_data()
@@ -43,15 +63,6 @@ def ai_dashboard_monitoring(t, anomaly_threshold=0.75):
 
 t_values = np.linspace(0, 50, 1000, dtype=np.float32)
 gw_ai_anomaly_monitor = ai_dashboard_monitoring(t_values)
-
-# ===================== AI-Enhanced LIGO/VIRGO Validation Framework =====================
-@st.cache_data(ttl=5)
-def ai_validate_ligo_data(t, validation_factor=1.2):
-    base_wave = np.sin(2 * np.pi * t)
-    validation_wave = np.sin(validation_factor * np.pi * t) * np.exp(-0.002 * t)
-    return base_wave + validation_wave
-
-gw_ai_ligo_validation = ai_validate_ligo_data(t_values)
 
 # ===================== AI Forecasting with Real LIGO Data =====================
 @st.cache_data(ttl=300)
@@ -84,14 +95,6 @@ ax.set_ylabel("Signal Strength")
 ax.legend()
 st.pyplot(fig)
 
-st.subheader("📊 AI-Enhanced LIGO/VIRGO Validation")
-fig, ax = plt.subplots()
-ax.plot(t_values, gw_ai_ligo_validation, label="LIGO/VIRGO Validation", color='orange')
-ax.set_xlabel("Time")
-ax.set_ylabel("Resonance")
-ax.legend()
-st.pyplot(fig)
-
 st.subheader("🔮 AI-Powered Gravitational Wave Forecasting with LIGO Data")
 fig, ax = plt.subplots()
 ax.plot(x_future, y_future_pred, label="LIGO-Based AI Prediction", color='purple')
@@ -103,11 +106,13 @@ st.pyplot(fig)
 st.sidebar.header("AI-Powered Research Insights")
 st.sidebar.write("""
 - ✅ **Real-time anomaly detection integrated**
-- ✅ **AI-enhanced LIGO/VIRGO resonance validation**
-- ✅ **BiLSTM optimizing resonance tracking**
 - ✅ **LIGO-based AI gravitational wave forecasting added**
 """)
 
 # ===================== Auto-Refresh Every Few Seconds =====================
-st.session_state.last_update = time.time()
+if "last_update" not in st.session_state:
+    st.session_state.last_update = time.time()
+
+# Auto-refresh workaround (instead of st.experimental_rerun)
+time.sleep(5)  # Wait 5 seconds before refresh
 st.rerun()

@@ -98,49 +98,50 @@ def generate_ai_forecast_with_ligo():
 # Generate AI forecast with LIGO data
 x_future, y_future_pred = generate_ai_forecast_with_ligo()
 
-# ===================== AI Prediction Accuracy & Probabilistic Analysis =====================
-def calculate_accuracy(true_values, predicted_values):
-    return mean_squared_error(true_values, predicted_values) ** 0.5  # RMSE Calculation
-
-def event_probability(false_alarm_rate):
-    return 1 - norm.cdf(false_alarm_rate, loc=0, scale=1)  # Probability estimation
-
-accuracy_score = calculate_accuracy(x_future, y_future_pred)
-if not ligo_df.empty and "False Alarm Rate" in ligo_df.columns:
-    probabilities = ligo_df["False Alarm Rate"].apply(event_probability)
-    ligo_df["Event Probability"] = probabilities
-
-# ===================== Real-Time AI Web Interface =====================
-st.title("🚀 AI-Powered Real-Time Gravitational Wave Monitoring")
-
-st.sidebar.header("Settings")
+# ===================== Streamlit UI =====================
+st.set_page_config(layout="wide", page_title="AI-Powered Gravitational Wave Analysis", page_icon="🌌")
+st.sidebar.header("🔧 Dashboard Settings")
 thresh = st.sidebar.slider("Anomaly Detection Threshold", 0.5, 1.0, 0.75)
 
-st.subheader("🌌 Real-Time LIGO/VIRGO Gravitational Wave Data")
-st.dataframe(ligo_df)  # Display data as a table
+st.title("🚀 AI-Powered Real-Time Gravitational Wave Monitoring")
+st.markdown("---")
 
+# Display real-time LIGO/VIRGO data
+col1, col2 = st.columns([2, 1])
+with col1:
+    st.subheader("🌌 Real-Time LIGO/VIRGO Data")
+    st.dataframe(ligo_df)
+with col2:
+    st.subheader("🔎 AI-Powered Insights")
+    st.metric("AI Prediction Accuracy (RMSE)", f"{mean_squared_error(x_future, y_future_pred) ** 0.5:.4f}")
+
+# Anomaly Detection Chart
+st.markdown("---")
 st.subheader("📡 AI-Detected Gravitational Wave Anomalies")
 fig, ax = plt.subplots()
-ax.plot(t_values, gw_ai_anomaly_monitor, label="GW Anomalies")
+ax.plot(t_values, gw_ai_anomaly_monitor, label="GW Anomalies", color='red')
 ax.set_xlabel("Time")
 ax.set_ylabel("Signal Strength")
 ax.legend()
 st.pyplot(fig)
 
+# AI Forecasting Chart
+st.markdown("---")
 st.subheader("🔮 AI-Powered Gravitational Wave Forecasting with LIGO Data")
 fig, ax = plt.subplots()
-ax.plot(x_future, y_future_pred, label=f"LIGO-Based AI Prediction (RMSE: {accuracy_score:.4f})", color='purple')
+ax.plot(x_future, y_future_pred, label=f"LIGO-Based AI Prediction", color='purple')
 ax.set_xlabel("Time")
 ax.set_ylabel("Amplitude")
 ax.legend()
 st.pyplot(fig)
 
-st.sidebar.header("AI-Powered Research Insights")
+st.sidebar.markdown("---")
+st.sidebar.header("📊 AI-Powered Research Insights")
 st.sidebar.write("""
 - ✅ **Real-time anomaly detection integrated**
 - ✅ **LIGO-based AI gravitational wave forecasting added**
 - ✅ **AI Prediction Accuracy Score (RMSE)**
-- ✅ **Event Probability Estimations**
+- ✅ **Interactive UI & Expanded Dashboard**
 """)
 
 # ===================== Auto-Refresh Every Few Seconds =====================
